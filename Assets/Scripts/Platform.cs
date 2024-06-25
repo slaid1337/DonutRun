@@ -6,7 +6,7 @@ namespace DonutRun
     {
         [SerializeField] private Vector3 _movingOffset = Vector3.zero;
 
-        [SerializeField] private float _movingSpeed = 1f;
+        [SerializeField] [Range(0f, 15f)] private float _movingSpeed = 1f;
 
         private Vector3 _startPosition;
         private bool _isMovingBack = false;
