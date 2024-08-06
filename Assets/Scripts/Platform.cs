@@ -16,7 +16,7 @@ namespace DonutRun
             _startPosition = transform.position;
         }
 
-        void Update()
+        void FixedUpdate()
         {
             if (_movingOffset != Vector3.zero) 
             {

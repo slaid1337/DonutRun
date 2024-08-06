@@ -4,8 +4,10 @@ namespace DonutRun
 {
     public class Donut : MonoBehaviour
     {
-        [SerializeField] private float _moveSpeed = 1f;
-
+        [SerializeField] private float _moveSpeed = 90f;
+        
+        [SerializeField] private Transform _originTransform;
+        [SerializeField] private Rigidbody _rigidBody;
         private Utilities.Controls _input;
         
         void Start()
@@ -14,28 +16,31 @@ namespace DonutRun
             _input.Enable();
         }
 
-        void Update()
+        void FixedUpdate()
         {
             if (_input.Default.LeftClick.IsPressed()) 
             {
-                transform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
+                _rigidBody.AddTorque(Vector3.back * _moveSpeed * Time.deltaTime);
+                // _originTransform.Translate(Vector3.right * _moveSpeed * Time.deltaTime, Space.Self);
             }
 
             if (_input.Default.RightClick.IsPressed()) 
             {
-                transform.Translate(Vector3.back * _moveSpeed * Time.deltaTime);
+                _rigidBody.AddTorque(Vector3.forward * _moveSpeed * Time.deltaTime);
+                // _originTransform.Translate(Vector3.left * _moveSpeed * Time.deltaTime, Space.Self);
             }
+        }
 
-            RaycastHit hit;
-            Physics.SphereCast(transform.position, transform.localScale.z, Vector3.down, out hit);
-            if (hit.collider != null) 
-            {
-                transform.parent = hit.collider.transform;
-            }
-            else 
-            {
-                transform.parent = null;
-            }
+        private void OnCollisionEnter(Collision collision) 
+        {
+            if (collision.gameObject.GetComponent<Platform>() != null)
+                _originTransform.parent = collision.transform;
+        }
+
+        private void OnCollisionExit(Collision collision) 
+        {
+            if (collision.gameObject.GetComponent<Platform>() != null)
+                _originTransform.parent = null;
         }
     }
 }
