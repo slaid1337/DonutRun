@@ -7,7 +7,7 @@ namespace DonutRun
         [SerializeField] private Vector3 _movingVector = Vector3.zero;
 
         [SerializeField] [Range(0f, 15f)] private float _movingSpeed = 1f;
-        [SerializeField] private bool _deafaultPosition = false;
+        [SerializeField] private bool _defaultPosition = false;
 
         private Vector3 _startPosition;
         private bool _isMovingBack = false;
@@ -21,7 +21,7 @@ namespace DonutRun
 
         void FixedUpdate()
         {
-            if (_movingVector != Vector3.zero && !_deafaultPosition) 
+            if (_movingVector != Vector3.zero && !_defaultPosition) 
             {
                 Vector3 move = _startPosition + _movingVector;
                 if (transform.position.normalized == move.normalized || transform.position.normalized == _startPosition.normalized)
