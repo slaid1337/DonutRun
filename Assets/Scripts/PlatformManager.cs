@@ -1,19 +1,61 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using DonutRun;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Rendering;
 
-public class PlatformManager : MonoBehaviour
+public class PlatformManager : Singletone<PlatformManager>
 {
     [SerializeField] private Donut _donut;
     [SerializeField] private GameObject _platformPrefab;
-    
+    [SerializeField] private GameObject _мovingPlatformPrefab;
+    [SerializeField] private GameObject _spikePlatformPrefab;
+    [SerializeField] private GameObject _jumpPlatformPrefab;
+    [SerializeField] private GameObject _jumpPlatformReversedPrefab;
+
     private List<Platform> _platforms = new List<Platform>();
 
-    void Start() 
+    public UnityEvent OnStartSpawn;
+
+    private enum StateType
     {
-        SpawnPlatform();
-        SpawnPlatform();
+        Default,
+        Forked
+    }
+
+    private StateType _state;
+
+    public Transform GetFirstPlatform()
+    {
+        return _platforms[0].transform.Find("NextPlatformTrigger").transform;
+    }
+
+    void Start()
+    {
+        _state = StateType.Default;
+
+        SpawnPlatform(_platformPrefab);
+
+        for (int i = 0; i < 50; i++)
+        {
+            int rand = Random.Range(0, 100);
+
+            if (rand >= 60)
+            {
+                SpawnMovePlatform();
+            }
+            else if (rand >= 50)
+            {
+                SpawnForkedPlatform();
+            }
+            else
+            {
+                SpawnPlatform(_platformPrefab);
+            }
+        }
+
+        OnStartSpawn?.Invoke();
     }
 
     private void OnEnable()
@@ -26,55 +68,340 @@ public class PlatformManager : MonoBehaviour
         _donut.OnNextPlatform -= OnNextPlatform;
     }
 
-    private void OnNextPlatform() 
+    private void OnNextPlatform()
     {
-        SpawnPlatform();
+        int rand = Random.Range(0, 100);
+
+        if (rand >= 60)
+        {
+            SpawnPlatform(_мovingPlatformPrefab);
+        }
+        else if (rand >= 50)
+        {
+            SpawnForkedPlatform();
+        }
+        else
+        {
+            SpawnPlatform(_platformPrefab);
+        }
+
         PopPlatform();
     }
 
-    private void PopPlatform() 
+    private void PopPlatform()
     {
-        if (_platforms.Count > 3) 
+        while (_platforms[0].StartPosition.x < 20)
         {
-            _platforms[0].DestroyPlatform(1.0f);
             _platforms.RemoveAt(0);
         }
     }
 
-    private void SpawnPlatform() 
+    private void SpawnMovePlatform()
     {
-        if (_platforms.Count == 0) 
+        if (_state == StateType.Forked)
         {
-            Platform newPlatform = Instantiate(_platformPrefab, transform).gameObject.GetComponent<Platform>();
-            _platforms.Add(newPlatform);
+            int[] mapSection = new int[3];
+
+            Platform previousPlatform = _platforms[_platforms.Count - 1];
+            Transform previousTransform = previousPlatform.transform;
+
+            Vector3 spawnPosition = new Vector3
+            (
+                previousTransform.position.x + 5f,
+                previousTransform.position.y,
+                3
+            );
+
+            int rand = Random.Range(0, 100);
+
+            if (rand >= 80)
+            {
+                SpawnJumpPlatform(spawnPosition);
+                mapSection[0] = 1;
+            }
+            else
+            {
+                SpawnPlatform(_platformPrefab, spawnPosition);
+            }
+
+            spawnPosition = new Vector3
+           (
+               previousTransform.position.x + 5f,
+               previousTransform.position.y,
+               0
+           );
+
+            rand = Random.Range(0, 100);
+
+            if (rand >= 80)
+            {
+                SpawnJumpPlatform(spawnPosition);
+                mapSection[1] = 1;
+            }
+            else
+            {
+                SpawnPlatform(_platformPrefab, spawnPosition);
+            }
+
+            spawnPosition = new Vector3
+           (
+               previousTransform.position.x + 5f,
+               previousTransform.position.y,
+               -3
+           );
+
+            rand = Random.Range(0, 100);
+
+            if (rand >= 80)
+            {
+                SpawnJumpPlatform(spawnPosition);
+                mapSection[2] = 1;
+            }
+            else
+            {
+                SpawnPlatform(_platformPrefab, spawnPosition);
+            }
+
+            spawnPosition.x += 5;
+            spawnPosition.z = 0;
+
+            SpawnPlatform(_мovingPlatformPrefab, spawnPosition);
+
+            if (mapSection.Contains(1))
+            {
+                if (mapSection[0] == 0)
+                {
+                    SpawnPlatform(_platformPrefab, new Vector3(spawnPosition.x + 5f, previousTransform.position.y, 3));
+                }
+
+                if (mapSection[1] == 0)
+                {
+                    SpawnPlatform(_platformPrefab, new Vector3(spawnPosition.x + 5f, previousTransform.position.y, 0));
+                }
+
+                if (mapSection[2] == 0)
+                {
+                    SpawnPlatform(_platformPrefab, new Vector3(spawnPosition.x + 5f, previousTransform.position.y, -3));
+                }
+            }
         }
-        else 
+        else
+        {
+            SpawnPlatform(_мovingPlatformPrefab);
+        }
+    }
+
+    private void SpawnPlatform(GameObject platform)
+    {
+        if (_platforms.Count == 0)
+        {
+            SpawnPlatform(platform, new Vector3(0, -1.5f, 0));
+        }
+        else if (_state == StateType.Forked)
         {
             Platform previousPlatform = _platforms[_platforms.Count - 1];
             Transform previousTransform = previousPlatform.transform;
 
+            Vector3 spawnPosition = new Vector3
+            (
+                previousTransform.position.x + 5f,
+                previousTransform.position.y,
+                3
+            );
+
+            SpawnPlatform(_platformPrefab, spawnPosition);
+
+            previousPlatform = _platforms[_platforms.Count - 1];
+            previousTransform = previousPlatform.transform;
+
+            spawnPosition = new Vector3
+           (
+               previousTransform.position.x,
+               previousTransform.position.y,
+               0
+           );
+
+            SpawnPlatform(_platformPrefab, spawnPosition);
+
+            previousPlatform = _platforms[_platforms.Count - 1];
+            previousTransform = previousPlatform.transform;
+
+            spawnPosition = new Vector3
+           (
+               previousTransform.position.x,
+               previousTransform.position.y,
+               -3
+           );
+
+            SpawnPlatform(_platformPrefab, spawnPosition);
+        }
+        else
+        {
+            Platform previousPlatform = _platforms[_platforms.Count - 1];
+            Transform previousTransform = previousPlatform.transform;
 
             Vector3 spawnPosition = new Vector3
             (
-                previousTransform.position.x + previousPlatform.MoveVector.x + previousTransform.localScale.x, 
-                previousTransform.position.y + previousPlatform.MoveVector.y, 
-                previousTransform.position.z + previousPlatform.MoveVector.z
+                previousTransform.position.x + 5f,
+                previousTransform.position.y,
+                0
             );
-            
-            Platform newPlatform = Instantiate(_platformPrefab, spawnPosition, new Quaternion(), transform)
-            .gameObject.GetComponent<Platform>();
-            
-            _platforms.Add(newPlatform);
 
-            newPlatform.ChangeMovingSpeed(3.0f);
-            newPlatform.ChangeMovingVector(GetRandomMoveVector());
-
-            newPlatform.transform.Find("NextPlatformTrigger").gameObject.SetActive(true);
+            SpawnPlatform(platform, spawnPosition);
         }
     }
 
-    private Vector3 GetRandomMoveVector() 
+    private void SpawnForkedPlatform()
     {
-        return new Vector3(Random.value * 3f, 0f, 0f);
+        if (_state == StateType.Default)
+        {
+            _state = StateType.Forked;
+
+            Platform previousPlatform = _platforms[_platforms.Count - 1];
+            Transform previousTransform = previousPlatform.transform;
+
+            Vector3 spawnPosition = new Vector3
+            (
+                previousTransform.position.x + 5f,
+                previousTransform.position.y,
+                0
+            );
+
+            SpawnPlatform(_мovingPlatformPrefab, spawnPosition);
+
+            previousPlatform = _platforms[_platforms.Count - 1];
+            previousTransform = previousPlatform.transform;
+
+            spawnPosition = new Vector3
+            (
+                previousTransform.position.x + 5f,
+                previousTransform.position.y,
+                3
+            );
+
+            SpawnPlatform(_platformPrefab, spawnPosition);
+
+            previousPlatform = _platforms[_platforms.Count - 1];
+            previousTransform = previousPlatform.transform;
+
+            spawnPosition = new Vector3
+            (
+                previousTransform.position.x,
+                previousTransform.position.y,
+                0
+            );
+
+            SpawnPlatform(_platformPrefab, spawnPosition);
+
+            previousPlatform = _platforms[_platforms.Count - 1];
+            previousTransform = previousPlatform.transform;
+
+            spawnPosition = new Vector3
+            (
+                previousTransform.position.x,
+                previousTransform.position.y,
+                -3
+            );
+
+            int randomNum = Random.Range(0, 100);
+
+            GameObject prefab = _platformPrefab;
+
+            if (randomNum >= 60)
+            {
+                prefab = _spikePlatformPrefab;
+            }
+
+            SpawnPlatform(prefab, spawnPosition);
+        }
+        else
+        {
+            _state = StateType.Default;
+
+            Platform previousPlatform = _platforms[_platforms.Count - 1];
+            Transform previousTransform = previousPlatform.transform;
+
+            Vector3 spawnPosition = new Vector3
+            (
+                previousTransform.position.x + 5f,
+                previousTransform.position.y,
+                0
+            );
+
+            SpawnPlatform(_мovingPlatformPrefab, spawnPosition);
+
+            previousPlatform = _platforms[_platforms.Count - 1];
+            previousTransform = previousPlatform.transform;
+
+            spawnPosition = new Vector3
+            (
+                previousTransform.position.x + 5f,
+                previousTransform.position.y,
+                0
+            );
+
+            SpawnPlatform(_platformPrefab, spawnPosition);
+        }
+    }
+
+    private Vector3 GetRandomMoveVector()
+    {
+        return new Vector3(0f, 0f, Random.value * 3f);
+    }
+
+    private Platform SpawnPlatform(GameObject prefab, Vector3 position)
+    {
+        Platform newPlatform = Instantiate(prefab, position, new Quaternion(), transform)
+        .gameObject.GetComponent<Platform>();
+
+        if (_platforms.Count != 0) newPlatform.GenerateMoney();
+
+        _platforms.Add(newPlatform);
+        newPlatform.transform.Find("NextPlatformTrigger").gameObject.SetActive(true);
+        return newPlatform;
+    }
+
+    private void SpawnJumpPlatform()
+    {
+        Platform previousPlatform = _platforms[_platforms.Count - 1];
+        Transform previousTransform = previousPlatform.transform;
+
+        Vector3 spawnPosition = new Vector3
+            (
+                previousTransform.position.x + 5f,
+                previousTransform.position.y,
+                0
+            );
+
+        JumpPlace place = SpawnPlatform(_jumpPlatformPrefab, spawnPosition).GetComponentInChildren<JumpPlace>();
+
+        spawnPosition = new Vector3
+            (
+                previousTransform.position.x + 15f,
+                previousTransform.position.y,
+                0
+            );
+
+        JumpPlace otherPlace = SpawnPlatform(_jumpPlatformReversedPrefab, spawnPosition).GetComponentInChildren<JumpPlace>();
+
+        place.OtherPlace = otherPlace;
+        otherPlace.enabled = false;
+    }
+
+    private void SpawnJumpPlatform(Vector3 position)
+    {
+        JumpPlace place = SpawnPlatform(_jumpPlatformPrefab, position).GetComponentInChildren<JumpPlace>();
+
+        Vector3 spawnPosition = new Vector3
+            (
+                position.x + 10f,
+                position.y,
+                position.z
+            );
+
+        JumpPlace otherPlace = SpawnPlatform(_jumpPlatformReversedPrefab, spawnPosition).GetComponentInChildren<JumpPlace>();
+
+        place.OtherPlace = otherPlace;
+        otherPlace.enabled = false;
     }
 }

@@ -1,15 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DonutRun;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _scoreTMP;
-    [SerializeField] private TextMeshProUGUI _highScoreTMP;
 
     [SerializeField] private Donut _player;
 
@@ -25,6 +20,6 @@ public class UIManager : MonoBehaviour
 
     private void OnScoreChanged()
     {
-        _scoreTMP.text = $"Счёт: {_player.Score}";
+        _scoreTMP.text = $"{_player.Score}";
     }
 }

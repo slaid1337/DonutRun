@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c28d3ccea07b0845b6a8892fa2796c4, type: 3}
+  m_Name: ShopItemsObject
+  m_EditorClassIdentifier: 
+  ShopItemData:
+  - Icon: {fileID: 21300000, guid: 9bc19d392cb409a4fa1aa99e7102da56, type: 3}
+    Cost: 0
+    Name: Gentleness
+  - Icon: {fileID: 21300000, guid: 2339118e8e278d340a29678e8f118466, type: 3}
+    Cost: 200
+    Name: Sun
+  - Icon: {fileID: 21300000, guid: c9a9c08bd04c9e046addb457a186e129, type: 3}
+    Cost: 200
+    Name: Delight
+  - Icon: {fileID: 21300000, guid: 7b9d2fcbe33021d458d2e97bbdf488e5, type: 3}
+    Cost: 300
+    Name: Chocolate
+  - Icon: {fileID: 21300000, guid: a216a54c41d06eb478cf393647cefbf0, type: 3}
+    Cost: 500
+    Name: Web
+  - Icon: {fileID: 21300000, guid: 65f39d8e387c96f488d90898ee41a660, type: 3}
+    Cost: 500
+    Name: Pumpkin
