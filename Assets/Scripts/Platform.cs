@@ -10,6 +10,8 @@ namespace DonutRun
         [SerializeField] private bool _defaultPosition = false;
         [SerializeField] private GameObject[] _prefabsMoney;
 
+        private bool _paused;
+
         private Vector3 _startPosition;
         private bool _isMovingBack = false;
         public Vector3 StartPosition
@@ -33,6 +35,17 @@ namespace DonutRun
                 _startPosition = transform.position - _movingVector;
                 _movingVector *= 2;
             }
+
+        }
+
+        public void Pause()
+        {
+            _paused = true;
+        }
+
+        public void UnPause()
+        {
+            _paused = false;
         }
 
         public void SetStatic()
@@ -42,6 +55,8 @@ namespace DonutRun
 
         void FixedUpdate()
         {
+            if (_paused) return;
+
             if (_movingVector != Vector3.zero && !_defaultPosition)
             {
                 Vector3 move = _startPosition + _movingVector;

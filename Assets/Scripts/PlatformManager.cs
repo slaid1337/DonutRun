@@ -3,7 +3,6 @@ using System.Linq;
 using DonutRun;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Rendering;
 
 public class PlatformManager : Singletone<PlatformManager>
 {
@@ -37,7 +36,7 @@ public class PlatformManager : Singletone<PlatformManager>
 
         SpawnPlatform(_platformPrefab);
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 20; i++)
         {
             int rand = Random.Range(0, 100);
 
@@ -56,6 +55,25 @@ public class PlatformManager : Singletone<PlatformManager>
         }
 
         OnStartSpawn?.Invoke();
+
+        PausePanel.Instance.OnPause.AddListener(Pause);
+        PausePanel.Instance.OnResume.AddListener(UnPause);
+    }
+
+    public void Pause()
+    {
+        foreach (var item in _platforms)
+        {
+            item.Pause();
+        }
+    }
+
+    public void UnPause()
+    {
+        foreach (var item in _platforms)
+        {
+            item.UnPause();
+        }
     }
 
     private void OnEnable()
@@ -90,10 +108,13 @@ public class PlatformManager : Singletone<PlatformManager>
 
     private void PopPlatform()
     {
-        while (_platforms[0].StartPosition.x < 20)
+        print(_platforms[0].StartPosition.x);
+        while (_donut.transform.position.x - _platforms[0].StartPosition.x > 20)
         {
-            _platforms.RemoveAt(0);
+            Destroy(_platforms[0].gameObject);
+            _platforms.Remove(_platforms[0]);
         }
+        
     }
 
     private void SpawnMovePlatform()

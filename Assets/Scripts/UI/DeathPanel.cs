@@ -1,3 +1,4 @@
+using DonutRun;
 using Eiko.YaSDK;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ public class DeathPanel : BasePanel
 {
     public static DeathPanel Instance;
     public UnityEvent OnRevive;
+    [SerializeField] private Donut _donut;
 
     private void Awake()
     {
@@ -19,6 +21,7 @@ public class DeathPanel : BasePanel
     {
         FadeBG.Instance.Fade();
         OpenPanel();
+        YandexSDK.instance.ShowInterstitial();
     }
 
     public void Close()
@@ -41,6 +44,14 @@ public class DeathPanel : BasePanel
     }
     public void Back()
     {
+        int currentScore = SaveController.Instance.GetBestScore();
+
+        if ( currentScore < _donut.Score)
+        {
+            SaveController.Instance.SetBestScore(_donut.Score);
+            YandexSDK.instance.SetScore(_donut.Score);
+        }
+
         GameTransition.Instance.OpenTransition(delegate
         {
             SceneManager.LoadScene("MainMenu");

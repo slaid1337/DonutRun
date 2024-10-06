@@ -1,3 +1,4 @@
+using Lean.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +21,7 @@ public class ShopItem : MonoBehaviour
 
         _icon.sprite = _data.Icon;
         _costText.text = _data.Cost.ToString();
-        _nameText.text = _data.Name.ToString();
+        _nameText.text = LeanLocalization.GetTranslationText(_data.Name.ToString());
 
         if (SaveController.Instance.GetActiveDonut() == _data.Name)
         {
@@ -41,6 +42,8 @@ public class ShopItem : MonoBehaviour
         _buyState.gameObject.SetActive(false);
         _setState.gameObject.SetActive(false);
         _activeState.gameObject.SetActive(false);
+
+        _nameText.text = LeanLocalization.GetTranslationText(_data.Name.ToString());
 
         state.SetActive(true);
     }

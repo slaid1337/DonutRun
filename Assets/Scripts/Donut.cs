@@ -22,6 +22,8 @@ namespace DonutRun
 
         public int Score => _currentScore;
 
+        private bool _paused;
+
         void Start()
         {
             _input = new Utilities.Controls();
@@ -33,6 +35,23 @@ namespace DonutRun
             {
                 _lastSave = PlatformManager.Instance.GetFirstPlatform();
             });
+
+            PausePanel.Instance.OnPause.AddListener(Pause);
+            PausePanel.Instance.OnResume.AddListener(UnPause);
+        }
+
+        public void Pause()
+        {
+            _paused = true;
+
+            _rigidBody.isKinematic = true;
+        }
+
+        public void UnPause()
+        {
+            _paused = false;
+
+            _rigidBody.isKinematic = false;
         }
 
         private void Death() 
@@ -59,6 +78,8 @@ namespace DonutRun
 
         void FixedUpdate()
         {
+            if (_paused) return;
+
             if (_input.Default.LeftClick.IsPressed()) 
             {
                 _rigidBody.AddTorque(Vector3.back * _moveSpeed * Time.fixedDeltaTime * (Mathf.Abs(Mathf.Clamp(_rigidBody.velocity.x, 1, 1.3f))));

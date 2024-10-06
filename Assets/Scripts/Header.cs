@@ -19,7 +19,7 @@ public class Header : MonoBehaviour
     private void OnEnable()
     {
         _player.OnScoreChanged += OnScoreChanged;
-        _moneyController.OnChangeMoney.AddListener(OnMoneyChanged);
+        MoneyController.Instance.OnChangeMoney.AddListener(OnMoneyChanged);
     }
 
     private void OnDisable()

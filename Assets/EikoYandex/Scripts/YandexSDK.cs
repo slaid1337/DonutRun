@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using Eiko.YaSDK.Data;
 using UnityEngine.Events;
+using Lean.Localization;
 
 namespace Eiko.YaSDK
 {
@@ -123,6 +124,7 @@ namespace Eiko.YaSDK
 #if !UNITY_EDITOR && UNITY_WEBGL
                 Lang = GetLang();
 #endif
+
             }
             else
             {
