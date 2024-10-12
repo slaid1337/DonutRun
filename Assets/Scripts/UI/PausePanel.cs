@@ -8,9 +8,9 @@ public class PausePanel : BasePanel
 {
     public static PausePanel Instance { get; private set; }
 
+    [SerializeField] private Donut _donut;
     public UnityEvent OnPause;
     public UnityEvent OnResume;
-    [SerializeField] private Donut _donut;
 
     private void Awake()
     {
@@ -22,6 +22,9 @@ public class PausePanel : BasePanel
         FadeBG.Instance.Fade();
         OpenPanel();
         OnPause?.Invoke();
+
+        YandexSDK.StopAPI();
+        YandexSDK.instance.CanPlay = false;
     }
 
     public void Close()
@@ -29,6 +32,9 @@ public class PausePanel : BasePanel
         FadeBG.Instance.UnFade();
         ClosePanel();
         OnResume?.Invoke();
+
+        YandexSDK.instance.CanPlay = true;
+        YandexSDK.StartAPI();
     }
 
     public void LoadMenu()

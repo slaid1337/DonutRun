@@ -11,6 +11,8 @@ public class DeathPanel : BasePanel
     public static DeathPanel Instance;
     public UnityEvent OnRevive;
     [SerializeField] private Donut _donut;
+    public UnityEvent OnPause;
+    public UnityEvent OnResume;
 
     private void Awake()
     {
@@ -21,13 +23,20 @@ public class DeathPanel : BasePanel
     {
         FadeBG.Instance.Fade();
         OpenPanel();
-        YandexSDK.instance.ShowInterstitial();
+        OnPause?.Invoke();
+
+        YandexSDK.StopAPI();
+        YandexSDK.instance.CanPlay = false;
     }
 
     public void Close()
     {
         FadeBG.Instance.UnFade();
         ClosePanel();
+        OnResume?.Invoke();
+
+        YandexSDK.instance.CanPlay = true;
+        YandexSDK.StartAPI();
     }
 
     public void Revive()

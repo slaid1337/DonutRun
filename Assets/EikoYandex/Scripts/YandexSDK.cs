@@ -113,7 +113,7 @@ namespace Eiko.YaSDK
         public string adsPurchize = "AddOff";
         public string Lang = "en";
         public bool IsFirstOpen = true;
-        public bool IsFocused;
+        public bool CanPlay = false;
 
         private void Awake()
         {
@@ -137,46 +137,23 @@ namespace Eiko.YaSDK
             AdsEnabled = 0 == PlayerPrefs.GetInt(key, 0);
             onPurchaseSuccess += PurchizeCallbackAds;
 
-
-#if !UNITY_EDITOR && UNITY_WEBGL
-
-            onRewardedAdError += delegate
-            {
-                StartTab();
-            };
-
-            onRewardedAdClosed += delegate
-            {
-                StartTab();
-            };
-
-            onRewardedAdOpened += delegate
-            {
-                StopTab();
-            };
-
-            onRewardedAdReward += delegate
-            {
-                StartTab();
-            };
-
-#endif
         }
 
-#if !UNITY_EDITOR && UNITY_WEBGL
-
-        void OnApplicationFocus(bool hasFocus)
+        private void OnApplicationFocus(bool focus)
         {
-            StartTab();
+            if (focus && CanPlay)
+            {
+                StartAPI();
+            }
         }
 
-        void OnApplicationPause(bool isPaused)
+        private void OnApplicationPause(bool pause)
         {
-            IsFocused = false;
-            StopTab();
+            if (pause && CanPlay)
+            {
+                StopAPI();
+            }
         }
-
-#endif
 
         private void Start()
         {
@@ -184,29 +161,19 @@ namespace Eiko.YaSDK
             Application.targetFrameRate = 100;
         }
 
-        private void Update()
-        {
-#if !UNITY_EDITOR && UNITY_WEBGL
-            if (!IsFocused)
-            {
-                if (Input.GetMouseButton(0))
-                {
-                    IsFocused = true;
-                    StartTab();
-                }
-
-                if (Input.GetMouseButton(1))
-                {
-                    IsFocused = true;
-                    StartTab();
-                }
-            }
-#endif
-        }
-
         public static void Ready()
         {
             ReadyTab();
+        }
+
+        public static void StartAPI()
+        {
+            StartTab();
+        }
+
+        public static void StopAPI()
+        {
+            StopTab();
         }
 
         public IEnumerator InitDataPrefs()
@@ -382,14 +349,10 @@ namespace Eiko.YaSDK
         /// <param name="placement"></param>
         public void OnRewarded(int placement)
         {
-            AudioListener.pause = false;
-            
             if (placement == rewardedAdPlacementsAsInt.Dequeue())
             {
                 onRewardedAdReward?.Invoke(rewardedAdsPlacements.Dequeue());
             }
-
-            print("aa");
         }
 
         /// <summary>
@@ -409,7 +372,6 @@ namespace Eiko.YaSDK
         /// <param name="placement"></param>
         public void OnRewardedError(string placement)
         {
-            
             AudioListener.pause = false;
             onRewardedAdError?.Invoke(placement);
             rewardedAdsPlacements.Clear();
@@ -523,6 +485,11 @@ namespace Eiko.YaSDK
 #if !UNITY_EDITOR
             SetScore(key, value);
 #endif
+        }
+
+        public void SetBestScore(int value)
+        {
+            SetScore("bestscore", value);
         }
 
         public void InitData()

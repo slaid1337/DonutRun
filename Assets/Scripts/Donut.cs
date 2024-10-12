@@ -22,7 +22,7 @@ namespace DonutRun
 
         public int Score => _currentScore;
 
-        private bool _paused;
+        private bool _paused = true;
 
         void Start()
         {
@@ -38,6 +38,18 @@ namespace DonutRun
 
             PausePanel.Instance.OnPause.AddListener(Pause);
             PausePanel.Instance.OnResume.AddListener(UnPause);
+
+            DeathPanel.Instance.OnPause.AddListener(Pause);
+            DeathPanel.Instance.OnResume.AddListener(UnPause);
+
+            SettingsPanel.Instance.OnPause.AddListener(Pause);
+            SettingsPanel.Instance.OnResume.AddListener(UnPause);
+
+            GameTransition.Instance.OnLoad.AddListener(delegate
+            {
+                _paused = false;
+                print("Play");
+            });
         }
 
         public void Pause()

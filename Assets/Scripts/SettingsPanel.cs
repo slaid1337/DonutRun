@@ -1,6 +1,7 @@
 using Eiko.YaSDK;
 using Lean.Localization;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class SettingsPanel : BasePanel
@@ -9,9 +10,17 @@ public class SettingsPanel : BasePanel
     [SerializeField] private Slider _mainAudioSlider;
     [SerializeField] private Image ENOutline;
     [SerializeField] private Image RUOutline;
+    [SerializeField] private bool _isPlayScene;
     private float _musicSliderLastValue = 3;
     private float _mainSliderLastValue = 3;
+    public UnityEvent OnPause;
+    public UnityEvent OnResume;
+    public static SettingsPanel Instance;
 
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     public void Open()
     {
@@ -19,6 +28,13 @@ public class SettingsPanel : BasePanel
         OpenPanel();
         RefreshBtns();
         RefreshLang();
+        OnPause?.Invoke();
+
+        if (_isPlayScene)
+        {
+            YandexSDK.StopAPI();
+            YandexSDK.instance.CanPlay = false;
+        }
     }
 
     public void RefreshLang()
@@ -27,7 +43,7 @@ public class SettingsPanel : BasePanel
 
         if (lang == "")
         {
-            lang = YandexSDK.instance.Lang;
+            lang = YandexSDK.instance.Lang.ToUpper();
         }
 
         if (lang == "RU")
@@ -47,6 +63,13 @@ public class SettingsPanel : BasePanel
         FadeBG.Instance.UnFade();
         ClosePanel();
         RefreshBtns();
+        OnResume?.Invoke();
+
+        if (_isPlayScene)
+        {
+            YandexSDK.instance.CanPlay = true;
+            YandexSDK.StartAPI();
+        }
     }
 
     public void SetRussian()

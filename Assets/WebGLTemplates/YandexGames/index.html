@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="TemplateData/style.css">
     <script src="/sdk.js"></script>
 </head>
-<body bgcolor="#000000">
+<body bgcolor="#bb7299">
     <div align="center">
         <div id="unity-container" class="unity-desktop">
             <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}}></canvas>
@@ -301,7 +301,7 @@
             function SetScoreTable(score){
                 sdk.getLeaderboards()
                 .then(lb => {
-                    lb.setLeaderboardScore('leaderboard', score);
+                    lb.setLeaderboardScore('bestscore', score);
                 });
             }
 
