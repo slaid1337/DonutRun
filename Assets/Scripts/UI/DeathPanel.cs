@@ -61,6 +61,37 @@ public class DeathPanel : BasePanel
             YandexSDK.instance.SetScore(_donut.Score);
         }
 
+        if (YandexSDK.instance.addsAvailable)
+        {
+            YandexSDK.instance.onInterstitialShown += LoadTransition;
+            YandexSDK.instance.onInterstitialFailed += LoadTransition;
+            YandexSDK.instance.ShowInterstitial();
+        }
+        else
+        {
+            GameTransition.Instance.OpenTransition(delegate
+            {
+                SceneManager.LoadScene("MainMenu");
+            });
+        }
+    }
+
+    public void LoadTransition()
+    {
+        YandexSDK.instance.onInterstitialShown -= LoadTransition;
+        YandexSDK.instance.onInterstitialFailed -= LoadTransition;
+
+        GameTransition.Instance.OpenTransition(delegate
+        {
+            SceneManager.LoadScene("MainMenu");
+        });
+    }
+
+    public void LoadTransition(string obj)
+    {
+        YandexSDK.instance.onInterstitialShown -= LoadTransition;
+        YandexSDK.instance.onInterstitialFailed -= LoadTransition;
+
         GameTransition.Instance.OpenTransition(delegate
         {
             SceneManager.LoadScene("MainMenu");

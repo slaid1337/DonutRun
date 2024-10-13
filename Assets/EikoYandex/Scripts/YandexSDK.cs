@@ -20,7 +20,7 @@ namespace Eiko.YaSDK
         [HideInInspector]
         public CanvasAddEditor editorCanvas;
 #endif
-        public const int ReloadAdsSeconds = 180;
+        public const int ReloadAdsSeconds = 60;
         public const string key = "AddsOff";
         public bool AdsEnabled { get; private set; }
 
@@ -216,11 +216,12 @@ namespace Eiko.YaSDK
                 StartCoroutine(WaitAddReload());
 #if !UNITY_EDITOR && UNITY_WEBGL
                 ShowFullscreenAd();
+                StopTab();
 #else
                 editorCanvas.OpenFullScreen();
 #endif
 
-                StopTab();
+                
 
                 AudioListener.pause = true;
                 
@@ -316,10 +317,13 @@ namespace Eiko.YaSDK
         /// </summary>
         public void OnInterstitialShown()
         {
+            #if !UNITY_EDITOR && UNITY_WEBGL
             StartTab();
+#endif
             AudioListener.pause = false;
             
             onInterstitialShown?.Invoke();
+            print("close");
         }
 
         /// <summary>
@@ -328,8 +332,10 @@ namespace Eiko.YaSDK
         /// <param name="error"></param>
         public void OnInterstitialError(string error)
         {
+            #if !UNITY_EDITOR && UNITY_WEBGL
             StartTab();
-            
+#endif
+
             AudioListener.pause = false;
             onInterstitialFailed?.Invoke(error);
         }

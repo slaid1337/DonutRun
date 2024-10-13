@@ -45,7 +45,6 @@ public class GameTransition : Singletone<GameTransition>
         sequence.Join(_transition.DOLocalRotate(new Vector3(0, 0, -360f), 1.5f, RotateMode.FastBeyond360));
         sequence.onComplete += delegate
         {
-            YandexSDK.instance.ShowInterstitial();
             onComplete.Invoke();
         };
     }
