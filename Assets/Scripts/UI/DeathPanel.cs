@@ -1,7 +1,5 @@
+using CGWebPlatform;
 using DonutRun;
-using Eiko.YaSDK;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -17,6 +15,12 @@ public class DeathPanel : BasePanel
     private void Awake()
     {
         Instance = this;
+        CGWebPlatformSDK.Instance.OnGetAdReward.AddListener(OnReward);
+    }
+
+    private void OnDestroy()
+    {
+        CGWebPlatformSDK.Instance.OnGetAdReward.RemoveListener(OnReward);
     }
 
     public void Open()
@@ -24,9 +28,6 @@ public class DeathPanel : BasePanel
         FadeBG.Instance.Fade();
         OpenPanel();
         OnPause?.Invoke();
-
-        YandexSDK.StopAPI();
-        YandexSDK.instance.CanPlay = false;
     }
 
     public void Close()
@@ -34,20 +35,16 @@ public class DeathPanel : BasePanel
         FadeBG.Instance.UnFade();
         ClosePanel();
         OnResume?.Invoke();
-
-        YandexSDK.instance.CanPlay = true;
-        YandexSDK.StartAPI();
     }
 
     public void Revive()
     {
-        YandexSDK.instance.onRewardedAdReward += OnReward;
-        
-        YandexSDK.instance.ShowRewarded("Revive");
+        CGWebPlatformSDK.Instance.ShowRewarded("Revive");
     }
 
     public void OnReward(string str)
     {
+        if (str != "Revive") return;
         OnRevive?.Invoke();
         Close();
     }
@@ -55,46 +52,16 @@ public class DeathPanel : BasePanel
     {
         int currentScore = SaveController.Instance.GetBestScore();
 
-        if ( currentScore < _donut.Score)
+        if (currentScore < _donut.Score)
         {
             SaveController.Instance.SetBestScore(_donut.Score);
-            YandexSDK.instance.SetScore(_donut.Score);
-        }
 
-        if (YandexSDK.instance.addsAvailable)
-        {
-            YandexSDK.instance.onInterstitialShown += LoadTransition;
-            YandexSDK.instance.onInterstitialFailed += LoadTransition;
-            YandexSDK.instance.ShowInterstitial();
         }
-        else
-        {
-            GameTransition.Instance.OpenTransition(delegate
-            {
-                SceneManager.LoadScene("MainMenu");
-            });
-        }
-    }
-
-    public void LoadTransition()
-    {
-        YandexSDK.instance.onInterstitialShown -= LoadTransition;
-        YandexSDK.instance.onInterstitialFailed -= LoadTransition;
 
         GameTransition.Instance.OpenTransition(delegate
         {
             SceneManager.LoadScene("MainMenu");
         });
-    }
 
-    public void LoadTransition(string obj)
-    {
-        YandexSDK.instance.onInterstitialShown -= LoadTransition;
-        YandexSDK.instance.onInterstitialFailed -= LoadTransition;
-
-        GameTransition.Instance.OpenTransition(delegate
-        {
-            SceneManager.LoadScene("MainMenu");
-        });
     }
 }

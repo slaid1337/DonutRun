@@ -1,5 +1,4 @@
 using DG.Tweening;
-using Eiko.YaSDK;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,14 +13,7 @@ public class UIMainMenu : MonoBehaviour
 
     private void Start()
     {
-        if (!YandexSDK.instance.IsFirstOpen)
-        {
-            Init();
-        }
-        else
-        {
-            YandexSDK.instance.onInitializeData += Init;
-        }
+        Init();
     }
 
     public void Init()

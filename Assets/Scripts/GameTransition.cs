@@ -1,5 +1,4 @@
 using DG.Tweening;
-using Eiko.YaSDK;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,7 +17,7 @@ public class GameTransition : Singletone<GameTransition>
         {
             CloseTransition(delegate
             {
-                YandexSDK.Ready();
+                
             });
         }
         else if (_isPlayScene)
@@ -26,7 +25,7 @@ public class GameTransition : Singletone<GameTransition>
             CloseTransition(delegate
             {
                 OnLoad?.Invoke();
-                YandexSDK.StartAPI();
+                
             });
         }
         else

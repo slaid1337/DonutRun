@@ -1,6 +1,5 @@
 using UnityEngine;
 using Lean.Localization;
-using Eiko.YaSDK;
 
 public class ChengeLang : MonoBehaviour
 {
@@ -15,7 +14,7 @@ public class ChengeLang : MonoBehaviour
 
         if (currentLang == "")
         {
-            currentLang = YandexSDK.instance.Lang.ToUpper();
+            currentLang = "EN";
         }
 
         LeanLocalization.SetCurrentLanguageAll(currentLang);

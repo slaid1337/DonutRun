@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 41a6b10461b31544eb83cce28ab992af
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _settings: {fileID: 11400000, guid: 85740265ae0bc26488be5af31f15641d, type: 2}
+  - editorCanvas: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

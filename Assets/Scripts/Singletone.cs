@@ -4,6 +4,7 @@ public class Singletone<T> : MonoBehaviour where T : MonoBehaviour
 {
     static T m_instance;
     [SerializeField] private bool _dontDestroy;
+    protected bool _isDestroyed;
 
     public static T Instance
     {
@@ -33,6 +34,7 @@ public class Singletone<T> : MonoBehaviour where T : MonoBehaviour
         else if (m_instance != this)
         {
             print(gameObject.name);
+            _isDestroyed = true;
             Destroy(gameObject);
         }
         if (_dontDestroy)

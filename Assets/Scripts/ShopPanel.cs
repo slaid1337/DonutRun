@@ -1,4 +1,3 @@
-using Eiko.YaSDK;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,14 +10,7 @@ public class ShopPanel : BasePanel
 
     private void Start()
     {
-        if (!YandexSDK.instance.IsFirstOpen)
-        {
-            Init();
-        }
-        else
-        {
-            YandexSDK.instance.onInitializeData += Init;
-        }
+        Init();
     }
 
     public void Init()

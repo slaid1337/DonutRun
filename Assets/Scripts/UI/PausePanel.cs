@@ -1,5 +1,4 @@
 using DonutRun;
-using Eiko.YaSDK;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -22,9 +21,6 @@ public class PausePanel : BasePanel
         FadeBG.Instance.Fade();
         OpenPanel();
         OnPause?.Invoke();
-
-        YandexSDK.StopAPI();
-        YandexSDK.instance.CanPlay = false;
     }
 
     public void Close()
@@ -32,9 +28,6 @@ public class PausePanel : BasePanel
         FadeBG.Instance.UnFade();
         ClosePanel();
         OnResume?.Invoke();
-
-        YandexSDK.instance.CanPlay = true;
-        YandexSDK.StartAPI();
     }
 
     public void LoadMenu()
@@ -44,7 +37,6 @@ public class PausePanel : BasePanel
         if (currentScore < _donut.Score)
         {
             SaveController.Instance.SetBestScore(_donut.Score);
-            YandexSDK.instance.SetScore(_donut.Score);
         }
 
         GameTransition.Instance.OpenTransition(delegate

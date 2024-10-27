@@ -1,6 +1,6 @@
 using UnityEngine;
-using Eiko.YaSDK.Data;
 using System;
+using CGWebPlatform;
 
 public class SaveController : Singletone<SaveController>
 {
@@ -9,72 +9,72 @@ public class SaveController : Singletone<SaveController>
 
     public void SetMoney(int count)
     {
-        YandexPrefs.SetInt("Money", count);
+        PlayerPrefs.SetInt("Money", count);
     }
 
     public int GetMoney()
     {
-        int money = YandexPrefs.GetInt("Money", 0);
+        int money = PlayerPrefs.GetInt("Money", 0);
 
         return money;
     }
 
     public void SetBestScore(int score)
     {
-        YandexPrefs.SetInt("BestScore", score);
+        PlayerPrefs.SetInt("BestScore", score);
     }
 
     public int GetBestScore()
     {
-        int score = YandexPrefs.GetInt("BestScore", 0);
+        int score = PlayerPrefs.GetInt("BestScore", 0);
 
         return score;
     }
 
     public void SetMusicAudio(bool isActive)
     {
-        YandexPrefs.SetInt("MusicAudio", isActive ? 1 : 0);
+        PlayerPrefs.SetInt("MusicAudio", isActive ? 1 : 0);
     }
 
     public bool GetMusicAudio()
     {
-        bool isActive = YandexPrefs.GetInt("MusicAudio", 0) == 1 ? true : false;
+        bool isActive = PlayerPrefs.GetInt("MusicAudio", 0) == 1 ? true : false;
 
         return isActive;
     }
 
     public void SetMainAudio(bool isActive)
     {
-        YandexPrefs.SetInt("MainAudio", isActive ? 1 : 0);
+        PlayerPrefs.SetInt("MainAudio", isActive ? 1 : 0);
     }
 
     public bool GetMainAudio()
     {
-        bool isActive = YandexPrefs.GetInt("MainAudio", 0) == 1 ? true : false;
+        bool isActive = PlayerPrefs.GetInt("MainAudio", 0) == 1 ? true : false;
 
         return isActive;
     }
 
     public void SetActiveDonut(string name)
     {
-        YandexPrefs.SetString("DonutSkin", name);
+        PlayerPrefs.SetString("DonutSkin", name);
     }
 
     public string GetActiveDonut()
     {
-        string name = YandexPrefs.GetString("DonutSkin", "Gentleness");
+        string name = PlayerPrefs.GetString("DonutSkin", "Gentleness");
 
         return name;
     }
 
     public void PurchaseItem(string name)
     {
-        YandexPrefs.SetInt("Item" + name, 1);
+        PlayerPrefs.SetInt("Item" + name, 1);
     }
 
     public bool IsItemPurchased(string name)
     {
-        bool isActive = YandexPrefs.GetInt("Item" + name, 0) == 1 ? true : false;
+        bool isActive = PlayerPrefs.GetInt("Item" + name, 0) == 1 ? true : false;
 
         return isActive;
     }

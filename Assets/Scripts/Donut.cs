@@ -82,7 +82,7 @@ namespace DonutRun
             _virtualCamera.Follow = transform;
             _virtualCamera.LookAt = transform;
 
-            _rigidBody.velocity = Vector3.zero;
+            _rigidBody.linearVelocity = Vector3.zero;
             _rigidBody.rotation = Quaternion.identity;
 
             transform.position = _lastSave.position;
@@ -94,12 +94,12 @@ namespace DonutRun
 
             if (_input.Default.LeftClick.IsPressed()) 
             {
-                _rigidBody.AddTorque(Vector3.back * _moveSpeed * Time.fixedDeltaTime * (Mathf.Abs(Mathf.Clamp(_rigidBody.velocity.x, 1, 1.3f))));
+                _rigidBody.AddTorque(Vector3.back * _moveSpeed * Time.fixedDeltaTime * (Mathf.Abs(Mathf.Clamp(_rigidBody.linearVelocity.x, 1, 1.3f))));
             }
 
             if (_input.Default.RightClick.IsPressed()) 
             {
-                _rigidBody.AddTorque(Vector3.forward * _moveSpeed * Time.fixedDeltaTime * (Mathf.Abs( Mathf.Clamp(_rigidBody.velocity.x, -1.3f, -1))));
+                _rigidBody.AddTorque(Vector3.forward * _moveSpeed * Time.fixedDeltaTime * (Mathf.Abs( Mathf.Clamp(_rigidBody.linearVelocity.x, -1.3f, -1))));
             }
 
             CheckGround();
@@ -184,7 +184,7 @@ namespace DonutRun
             velocity.y = verticalVelocity; // Добавляем вертикальную скорость
 
             // Применяем силу в соответствующем направлении
-            _rigidBody.velocity = velocity;
+            _rigidBody.linearVelocity = velocity;
         }
     }
 }

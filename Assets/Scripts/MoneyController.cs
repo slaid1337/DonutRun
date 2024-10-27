@@ -1,4 +1,3 @@
-using Eiko.YaSDK;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,14 +9,7 @@ public class MoneyController : Singletone<MoneyController>
 
     public void Start()
     {
-        if (!YandexSDK.instance.IsFirstOpen)
-        {
-            Init();
-        }
-        else
-        {
-            YandexSDK.instance.onInitializeData += Init;
-        }
+        Init();
     }
 
     public void Init()

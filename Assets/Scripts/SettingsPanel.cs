@@ -1,4 +1,3 @@
-using Eiko.YaSDK;
 using Lean.Localization;
 using UnityEngine;
 using UnityEngine.Events;
@@ -29,12 +28,6 @@ public class SettingsPanel : BasePanel
         RefreshBtns();
         RefreshLang();
         OnPause?.Invoke();
-
-        if (_isPlayScene)
-        {
-            YandexSDK.StopAPI();
-            YandexSDK.instance.CanPlay = false;
-        }
     }
 
     public void RefreshLang()
@@ -43,7 +36,7 @@ public class SettingsPanel : BasePanel
 
         if (lang == "")
         {
-            lang = YandexSDK.instance.Lang.ToUpper();
+            lang = "EN";
         }
 
         if (lang == "RU")
@@ -64,12 +57,6 @@ public class SettingsPanel : BasePanel
         ClosePanel();
         RefreshBtns();
         OnResume?.Invoke();
-
-        if (_isPlayScene)
-        {
-            YandexSDK.instance.CanPlay = true;
-            YandexSDK.StartAPI();
-        }
     }
 
     public void SetRussian()
